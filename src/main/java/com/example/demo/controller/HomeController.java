@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.repositry.UserRepos;
 import com.example.demo.security.Entity.User;
+import com.example.demo.service.JwtService;
 import com.example.demo.service.MyUserDetailsService;
 
 @RestController
@@ -30,6 +31,8 @@ public class HomeController {
 	UserRepos userRepos;
 	@Autowired
 	AuthenticationManager authenticationManager;
+	@Autowired
+	JwtService jwtService;
 
 	@GetMapping("/gretting")
 	public  String hello()
@@ -47,13 +50,16 @@ public class HomeController {
 		return 	userRepos.save(user1);
 	}
 	@PostMapping("/login")
-	public ResponseEntity<User> login(@RequestBody User user)
+	public ResponseEntity<String> login(@RequestBody User user)
 	{
 		Authentication authentication=authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 		
 		if(authentication.isAuthenticated())
 		{
-			return ResponseEntity.ok(user);
+			
+			
+//			return jwtService.generateToken(user.getUsername());
+			return ResponseEntity.ok(jwtService.generateToken(user.getUsername()));
 		}
 		else
 		{
